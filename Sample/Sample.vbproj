@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Sample</RootNamespace>
+    <TargetFramework>net5.0</TargetFramework>
+    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Emojis.txt" />
+    <None Remove="FileState.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FlagGenerator\FlagGenerator.vbproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <AdditionalFiles Include="FileState.txt" />
+  </ItemGroup>
+
+</Project>
