@@ -9,13 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Emojis.txt" />
-    <None Remove="FileState.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\FlagGenerator\FlagGenerator.vbproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <AdditionalFiles Include="FileState.txt" />
   </ItemGroup>
-
 </Project>

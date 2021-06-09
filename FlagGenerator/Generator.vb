@@ -1,22 +1,34 @@
 ﻿' Created By, Mohammad Hamdy Ghanem, 
 ' Egypt, 2020
 
-Imports System.IO
 Imports System.Text
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Text
 
-<Generator>
+<Generator(LanguageNames.VisualBasic)>
 Class FlagGenerator
     Implements ISourceGenerator
 
+    Structure FlagInfo
+        Public Modifier As String
+        Public Name As String
+        Public Flags As String()
 
-    Shared FlagTemplate As XCData = <![CDATA[
+        Public Sub New(modifier As String, name As String, flags() As String)
+            Me.Modifier = modifier
+            Me.Name = name
+            Me.Flags = flags
+        End Sub
+
+    End Structure
+
+
+    Shared FlagTemplate As String = "
 Class #FlagName#
 #Flags#
     Const MaxValue As Uinteger = #MaxValue#
-    Public Shared ReadOnly None As New #FlagName# ("None", 0)
-    Public Shared ReadOnly All As New #FlagName#("All", MaxValue)
+    Public Shared ReadOnly None As New #FlagName# (""None"", 0)
+    Public Shared ReadOnly All As New #FlagName#(""All"", MaxValue)
 
     Private ReadOnly Value As UInteger
 
@@ -67,7 +79,7 @@ Class #FlagName#
     End Property
 
     Public Overrides Function ToString() As String
-        Return ToString("+")
+        Return ToString(""+"")
     End Function
 
     Public Overloads Function ToString(Separator As String) As String
@@ -189,7 +201,7 @@ Class #FlagName#
         Return False
     End Function
 
-#Region "Operators"
+#Region ""Operators""
 
     Public Shared Widening Operator CType(value As UInteger) As #FlagName#
         Return New #FlagName#(value)
@@ -300,13 +312,14 @@ Class #FlagName#
     End Operator
 #End Region
 End Class
-]]>
+"
 
     Public Sub Initialize(context As GeneratorInitializationContext) Implements ISourceGenerator.Initialize
 
     End Sub
 
     Public Sub Execute(context As GeneratorExecutionContext) Implements ISourceGenerator.Execute
+        Console.WriteLine(context.AdditionalFiles.Length)
         Try
             Dim flagFiles = From file In context.AdditionalFiles
                             Where file.Path.ToLower().EndsWith(".txt")
@@ -325,24 +338,24 @@ End Class
                 Next
             Next
         Catch ex As Exception
-            Throw ex
+            Console.WriteLine(ex.Message)
         End Try
     End Sub
 
-    Private Function ParseFlagSyntax(line As String) As (Modifier$, Name$, Flags As String())?
+    Private Function ParseFlagSyntax(line As String) As FlagInfo?
         Dim pos2 = line.IndexOf("(")
         If pos2 < 6 Then Return Nothing
-        Dim flags = line.Substring(pos2 + 1).Trim(" "c, ")"c).Split({" "c, ","c}, StringSplitOptions.RemoveEmptyEntries)
+        Dim flags = line.Substring(pos2 + 1).Trim(" "c, ")"c).Split({" ", ","}, StringSplitOptions.RemoveEmptyEntries)
         Dim pos1 = line.IndexOf("flag", StringComparison.OrdinalIgnoreCase)
         If pos1 = -1 Then Return Nothing
         Dim modifier = If(pos1 > 0, line.Substring(0, pos1).Trim(), "")
         Dim name = line.Substring(pos1 + 4, pos2 - pos1 - 4).Trim()
-        Return (modifier, Name, flags)
+        Return New FlagInfo(modifier, name, flags)
     End Function
 
     Private Function GenerateFlag(modifier As String, flagName As String, flags() As String) As String
         Dim sbTemplate As New StringBuilder(modifier + " ")
-        sbTemplate.Append(FlagTemplate.Value.TrimStart(vbLf))
+        sbTemplate.Append(FlagTemplate.TrimStart(vbCr, vbLf))
         sbTemplate.Replace(vbCrLf, vbCr)
         sbTemplate.Replace(vbLf, vbCr)
         sbTemplate.Replace(vbCr, vbCrLf)
@@ -362,13 +375,13 @@ End Class
             Dim flag = ChrW(34) & flags(i) & ChrW(34)
             Dim value = 2 ^ i
 
-            sbFlags.AppendLine($"    Public Shared ReadOnly {flags(i)} As new {flagName}({flag}, {value})")
+            sbFlags.AppendLine($"    Public Shared ReadOnly [{flags(i)}] As new {flagName}({flag}, {value})")
             If sbFlagList.Length > 0 Then
                 sbFlagList.Append(", ")
                 sbStrFlagList.Append(", ")
                 sbValueFlagList.Append(", ")
             End If
-            sbFlagList.Append(flags(i))
+            sbFlagList.Append("[" & flags(i) & "]")
             sbStrFlagList.Append(flag)
             sbValueFlagList.Append(value)
         Next
@@ -381,3 +394,4 @@ End Class
     End Function
 
 End Class
+
