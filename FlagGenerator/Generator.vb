@@ -6,6 +6,7 @@ Imports System.Text
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Text
 
+<Generator>
 Class FlagGenerator
     Implements ISourceGenerator
 
