@@ -10,6 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FlagGenerator\FlagGenerator.vbproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <AdditionalFiles Include="FileState.txt" />
+    <AdditionalFiles Include="FileState.flag" />
   </ItemGroup>
 </Project>

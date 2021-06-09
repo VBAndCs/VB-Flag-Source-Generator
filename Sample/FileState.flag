@@ -1,0 +1,4 @@
+﻿
+Public Flag FileState(ReadOnly, Hidden, System)
+
+Public Flag Feeling(Happy, Sleepy, Hungery, Angery)

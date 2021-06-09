@@ -5,6 +5,7 @@ Imports System.Text
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Text
 
+
 <Generator(LanguageNames.VisualBasic)>
 Class FlagGenerator
     Implements ISourceGenerator
@@ -322,7 +323,7 @@ End Class
         Console.WriteLine(context.AdditionalFiles.Length)
         Try
             Dim flagFiles = From file In context.AdditionalFiles
-                            Where file.Path.ToLower().EndsWith(".txt")
+                            Where file.Path.ToLower().EndsWith(".flag")
 
             For Each flagFile In flagFiles
                 Dim generatorDocuments = New List(Of (documentName As String, source As String))
